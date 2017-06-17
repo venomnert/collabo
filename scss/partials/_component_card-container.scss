@@ -1,0 +1,31 @@
+.card-container {
+	display: flex;
+	justify-content: center;
+	align-items: flex-start;
+	flex-wrap: wrap;
+}
+
+.card-container__card {
+	flex: 0 1 35%;
+}
+
+@media (max-width: 725px) {
+	.card-container__card {
+		flex: 0 1 60%;
+		margin-bottom: 1.5em;
+	}
+}
+
+@media (max-width: 435px) {
+	.card-container__card {
+		flex: 0 1 70%;
+		margin-bottom: 1.5em;
+	}
+}
+
+@media (max-width: 365px) {
+	.card-container__card {
+		flex: 0 1 80%;
+		margin-bottom: 1.5em;
+	}
+}

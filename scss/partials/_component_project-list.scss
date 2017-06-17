@@ -1,0 +1,17 @@
+.project-list {
+	display: flex;
+	justify-content: space-around;
+	align-items: flex-start;
+	align-content: space-between; 
+	flex-wrap: wrap;
+}
+.project-list__item {
+	flex: 0 1 auto;
+	margin-bottom: 1em;
+}
+.b-findProject-page__heading {
+	text-align: center;
+	color: $primary-text-color;
+	margin-bottom: 2em;
+	visibility: hidden;
+}

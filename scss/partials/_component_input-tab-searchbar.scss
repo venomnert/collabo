@@ -1,0 +1,41 @@
+.b-tab {
+	margin: 0 auto;
+	text-align: right;
+	width: 100%;
+}
+.b-tab__url, .b-tab__topic {
+	border: 0;
+	padding: 0.30em 0;
+	text-align: center;
+	width: 8%;
+	color: $accent-color;
+	font-weight: 800;
+	letter-spacing: 0.15em;
+	background-color: $primary-color;
+	margin-left: 1em;
+}
+
+@media (max-width: 1090px) {
+	.b-tab { width: 80%; }
+	.b-tab__url, .b-tab__topic { width: 13%; }
+}
+@media (max-width: 720px) {
+	.b-input-container--url-input {
+		font-size: 3em;
+	}
+}
+@media (max-width: 700px) {
+	.b-tab__url, .b-tab__topic { width: 15%; }
+}
+@media (max-width: 600px) {
+	.b-tab__url, .b-tab__topic { width: 20%; }
+}
+@media (max-width: 480px) {
+	.b-input-container--url-input {
+		font-size: 2em;
+	}
+	.b-tab__url, .b-tab__topic { width: 23%; }
+}
+@media (max-width: 400px) {
+	.b-tab__url, .b-tab__topic { width: 27%; }
+}

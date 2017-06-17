@@ -1,0 +1,27 @@
+.b-input-container--url-input {
+	border: 0;
+	width: 100%;
+	border-bottom: 4px solid $accent-color;
+	font-size: 5em;
+	padding: 0.15em;
+	color: $accent-color;
+	caret-color: $accent-color;
+	background-color: $primary-color;
+}
+
+@media (max-width: 1090px) {
+	.b-input-container--url-input {
+		width: 80%;
+	}
+}
+@media (max-width: 720px) {
+	.b-input-container--url-input {
+		font-size: 3em;
+	}
+}
+@media (max-width: 480px) {
+	.b-input-container--url-input {
+		font-size: 2em;
+	}
+}
+

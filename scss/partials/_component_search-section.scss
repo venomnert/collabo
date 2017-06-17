@@ -1,0 +1,24 @@
+.b-findCollab-page__search {
+	background-color: $primary-color;
+	padding: 6em 0;
+	margin-bottom: 2em;
+}
+
+.b-findProject-page__search {
+	background-color: $primary-color-light;
+	padding: 6em 0;
+	margin-bottom: 2em;
+}
+
+@media (max-width: 575px) {
+	.b-findCollab-page__search {
+		padding: 4em 0;
+		margin-bottom: 1.5em;
+	}
+}
+@media (max-width: 500px) {
+	.b-findCollab-page__search {
+		padding: 3em 0;
+		margin-bottom: 1.5em;
+	}
+}

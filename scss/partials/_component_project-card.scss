@@ -1,0 +1,108 @@
+.project-card {
+	box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+	position: relative;
+}
+.project-card__avatar {
+	width: 450px;
+	height: 280px;
+	margin: 0 0 1em 0;
+}
+.project-card:after {
+	content: "";
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	display: block;
+	width: 450px;
+	height: 280px;
+	background-color: $primary-color;
+	opacity: 0.1;
+	z-index: 1;
+}
+.project-card__projectName {
+	font-size: 1.5em;
+	position: absolute;
+	margin: 0;
+	color: $primary-color-text;
+	text-align: left;
+	bottom: 26%;
+	left: 0;
+	right: 0;
+	height: 70px;
+	padding: 0.2em 1em;
+	z-index: 2;
+}
+.project-pop-list {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-around;
+	align-items: center;
+	padding: 0.5em 1em;
+}
+.pop-item--forks, 
+.pop-item--stargazers_count,
+.pop-item--watchers {
+	position: relative;
+}
+.pop-item--forks:before {
+	content:url('../img/github_svg/repo-forked.svg'); 
+	position: absolute;
+	left: -30%;
+	top: 0;
+}
+.pop-item--stargazers_count:before {
+	content:url('../img/github_svg/star.svg'); 
+	position: absolute;
+	left: -12%;
+	top: 0;
+}
+.pop-item--watchers:before {
+	content:url('../img/github_svg/eye.svg'); 
+	position: absolute;
+	left: -27%;
+	top: 0;
+}
+.pop-item__qty {
+	text-align: center;
+}
+
+@media (max-width: 500px) {
+	.project-card__avatar { width: 315px; }
+	.project-card:after { width: 315px; }
+	.project-pop-list { padding: 0; }
+	.project-card__projectName { 
+		bottom: 37%; 
+		width: 315px;
+		height: 100px;
+	}
+	.pop-item {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		@include divider(1px);
+	}
+	.project-pop-list {
+		display: block;
+	}
+	.project-pop-list__item {
+		flex: 0 1 60%;
+		display: block;
+	}
+	.pop-item__qty {
+		margin-left: 1em;
+	}
+	.pop-item--forks:before {
+		left: 25%;
+		top: 35%;
+	}
+	.pop-item--stargazers_count:before {
+		left: 7%;
+		top: 35%;
+	}
+	.pop-item--watchers:before {
+		left: 18%;
+		top: 35%;
+	}
+}

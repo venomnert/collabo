@@ -1,0 +1,89 @@
+.tag-editor {
+	margin: 0 auto;
+	border: 0;
+	border-bottom: 4px solid $accent-color;
+	font-size: 2em;
+	caret-color: $accent-color;
+	background-color: $primary-color;
+	height: 50px;
+	width: 100%;
+}
+.tag-editor li {
+	margin: 0;
+}
+.tag-editor .tag-editor-tag {
+	color: #fff;
+	padding: 0.35em;
+	background-color: $primary-color-dark;
+}
+.tag-editor .tag-editor-delete {
+	background-color: $primary-color-dark;
+	padding: 0.28em;
+}
+.tag-editor .tag-editor-delete i:before {
+	color: $accent-color;
+	font-size: 18px;
+}
+.tag-editor .placeholder {
+	height: 50px;
+	color: $secondary-text-color;
+	font-size: 1.25em;
+	letter-spacing: 0.1em;
+}
+.tag-editor .placeholder div {
+	@include vertical-align();
+}
+
+@media (max-width: 1090px) {
+	.tag-editor {
+		width: 80%;
+	}
+	.tag-editor .placeholder {
+		font-size: 1em;
+	}
+}
+@media (max-width: 480px) {
+	.tag-editor {
+		padding-top: 0.5em;
+		font-size: 1.25em;
+		overflow-y: scroll;
+		height: 54px;
+	}
+	
+	// Scroll style
+	.tag-editor::-webkit-scrollbar-track {
+		background-color: $primary-color;
+	}
+
+	.tag-editor::-webkit-scrollbar {
+		width: 5px;
+		background-color: #F5F5F5;
+	}
+
+	.tag-editor::-webkit-scrollbar-thumb
+	{
+		background-color: $accent-color;	
+		background-image: -webkit-linear-gradient(45deg,
+		                                          rgba(255, 255, 255, .2) 25%,
+												  transparent 25%,
+												  transparent 50%,
+												  rgba(255, 255, 255, .2) 50%,
+												  rgba(255, 255, 255, .2) 75%,
+												  transparent 75%,
+												  transparent)
+	}
+	.tag-editor .tag-editor-tag {
+		padding: 0.3em 0.25em;
+		margin-bottom: 0.2em;
+	}
+	.tag-editor .tag-editor-delete {
+		padding: 0.30em;
+	}
+	.tag-editor .placeholder {
+		height: 35px;
+	}
+	.tag-editor .tag-editor-delete i:before {
+		color: $accent-color;
+		font-size: 22px;
+	}
+}

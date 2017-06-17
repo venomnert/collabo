@@ -1,0 +1,17 @@
+.collab-list {
+	display: flex;
+	justify-content: space-around;
+	align-items: flex-start;
+	align-content: space-between; 
+	flex-wrap: wrap;
+}
+.collab-list__item {
+	flex: 0 1 auto;
+	margin-bottom: 1em;
+}
+.b-findCollab-page__heading {
+	text-align: center;
+	color: $primary-text-color;
+	margin-bottom: 2em;
+	visibility: hidden;
+}

@@ -1,0 +1,50 @@
+.b-app-info {
+	background-color: $primary-text-color;
+	font-size: 1rem;
+	padding: 5em;
+	margin-bottom: 5em;
+	@include divider(2px);
+	max-width: 100%;
+}
+.b-app-info__h1 {
+	color: $primary-color-text;
+	text-align: center;
+	@include vertical-align();
+	font-size: 4em;
+	letter-spacing: 0.25em;
+}
+.b-app-info__h2 { 
+	text-align: center;
+	@include vertical-align();
+}
+
+@media (max-width: 575px) {
+	.b-app-info {
+		font-size: 0.7em;
+	}
+}
+
+@media (max-width: 500px) {
+	.b-app-info {
+		font-size: 0.65em;
+		padding: 4em;
+	}
+}
+
+@media (max-width: 380px) {
+	.b-app-info__h1 {
+		letter-spacing: 0.2em;
+	}
+	.b-app-info {
+		padding: 4em 3em;
+	}
+}
+
+@media (max-width: 350px) {
+	.b-app-info {
+		padding: 4em 0.5em;
+	}
+	.b-app-info__h1 {
+		letter-spacing: 0.15em;
+	}
+}

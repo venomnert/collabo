@@ -1,0 +1,27 @@
+.user-card {
+	box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+	position: relative;
+}
+.user-card__avatar {
+	width: 280px;
+	height: 280px;
+	margin: 0;
+}
+.user-info {
+	position: absolute;
+	margin: 0;
+	background-color: $secondary-text-color;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: 55px;
+	padding: 0.25em 0.5em;
+}
+.user-info__username {
+	letter-spacing: 0.09em;
+	margin-bottom: 0.5em;
+}
+.user-info .user-info__link {
+	color: $primary-color-text;
+	letter-spacing: 0.05em;
+}
