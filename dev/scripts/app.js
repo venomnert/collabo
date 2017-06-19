@@ -1,6 +1,11 @@
-// Provide the best match
-// Provide voice query
-
+// Project Scope:
+	// Provide the best match
+	// Provide voice query
+import {pipe, render,
+				generateCard, cleanUrl,
+			  normalizeStrings, getMostUsedLanguage,
+				emptyGifDiv, throttlePageContent,
+				removeTags} from './util';
 var myApp = {};
 
 // myApp variables
@@ -11,18 +16,15 @@ myApp.htmlPages = []; // contains all pages for app (collabOrProject, findCollab
 
 myApp.userUrl = ''; // User's project url
 myApp.userSearchTopics = []; // Topics searched by user which is used to find collaboration
-myApp.allCollab = []; // Get all the collaborators from the top 5 return repos
 
 myApp.avoidLanguages = ['css', 'html', 'html5', 'css3']; // Github returns more result for programming languages
 myApp.userUrlInfo = ''; // Meta info retrieved from user's repo url
-// myApp.urlRepos = [];
-// myApp.topicRepos = [];
 
 // Create all my pages
 // Render the the first page collabOrProject
 myApp.init = function() {
 	this.createPages();
-	this.renderPage(this.getHtmlContent('collabOrProject'));
+	render('collabOrProject');
 }
 
 // Retrieve the returned page object and store in my array of pages
@@ -32,115 +34,59 @@ myApp.createPages = function() {
 	this.htmlPages.push(this.findProject());
 }
 
-// This function is responsible for dynamically rendering
-// new pages of the application
-myApp.renderPage = function(htmlPage) {
-	$('.container').html(htmlPage);
-	if ($("#tags").exists()) {
-		$('#tags').tagEditor({
-			placeholder: 'Enter topics ...'
-		});
-	}
-}
-
-// Get the html content based on the page name
-myApp.getHtmlContent = function(pageName) {
-	if (pageName === 'findCollab' || pageName === 'findProject') {
-		$('body').css('overflow-y', 'hidden');
-	}
-	return _.find(this.htmlPages, ['pageName', pageName]).htmlContent;
-}
-
 // Displays the choices and setup action listener
 // Based on the card chosen display the appropriate web page
 myApp.collabOrProject = function() {
+	// Remove any previous listeners attached to the container
+	$('.container').unbind('click');
+
+	// Create the html content for the home page
 	var $section = $('<section>')
 				.attr('class', 'b-collab-or-project wrapper-lg');
-
 	var $cardContainer = $('<div>')
 							.attr('class', 'card-container');
 	var $findCollabCard = $('<a>')
-							.append(this.generateCard('findCollab'))
+							.append(generateCard('findCollab'))
 							.attr('class', 'card-container__card');
-
 	var $findProjectCard = $('<a>')
-							.append(this.generateCard('findProject'))
+							.append(generateCard('findProject'))
 							.attr('class', 'card-container__card');
 	$cardContainer.append($findCollabCard, $findProjectCard);
 	$section.append($cardContainer);
-
-
-	$('.container').unbind('click');
+	// Setup the click event for the collaboration and project pages
 	$('.container').on('click', '.b-choice-card', (e) => {
 		// Remove header
 		$('.b-app-info').remove();
 		var pageName = e.currentTarget.getAttribute('data-cardName');
 		// console.log(pageName);
+
+		// Once again remove previous click events attached to the container
 		$('.container').unbind('click');
-		this.renderPage(this.getHtmlContent(pageName));
+		// Render the clicked page
+		render(pageName);
+
+		// Display voice command if it is turned on
+		if (annyang.isListening()) {
+			$(`.${pageName}-search-command`).css("opacity", 1);
+		}
 	});
 	return {pageName: 'collabOrProject', htmlContent: $section};
 }
 myApp.handleCollabOrProject = function(pageName) {
-	console.log('this', this);
+	// console.log('this', this);
 	// Remove header
 	$('.b-app-info').remove();
 	$("#tags").remove();
 	$('.container').unbind('click');
-	this.renderPage(this.getHtmlContent(pageName));
-}
-myApp.generateCard = function (cardName) {
-	var cards = [];
-
-	var $findCollabCard = $('<div>')
-					.attr({
-						'class': 'b-choice-card b-choice-card--findCollab',
-						'data-cardName': 'findCollab'
-					});
-	var $findProjectCard = $('<div>')
-					.attr({
-						'class': 'b-choice-card b-choice-card--findProject',
-						'data-cardName': 'findProject'
-					});
-
-	var $fc_logo = $('<img>')
-					.attr({
-						class: 'b-choice-card__logo b-choice-card__logo--findCollab',
-						src: './img/findCollab_w.svg'
-					});
-	var $fp_logo = $('<img>')
-					.attr({
-						class: 'b-choice-card__logo b-choice-card__logo--findProject',
-						src: './img/findProject.svg'
-					});
-
-	var $fc_heading = $('<h3>')
-					.attr('class', 'b-choice-card__heading b-choice-card__heading--findCollab')
-					.text('find your next collaborators');
-	var $fp_heading = $('<h3>')
-					.attr('class', 'b-choice-card__heading b-choice-card__heading--findProject')
-					.text('Discover your next project');
-
-	var $fc_p = $('<p>')
-				.attr('class', 'b-choice-card__text b-choice-card__text--findCollab')
-				.text("Find collaborators for your next project.");
-	var $fp_p = $('<p>')
-				.attr('class', 'b-choice-card__text b-choice-card__text--findProject')
-				.text("Explore thousands of projects hosted on GitHub.");
-
- 	// Append content into each cards
-	$findCollabCard.append($fc_logo, $fc_heading, $fc_p);
-	$findProjectCard.append($fp_logo, $fp_heading, $fp_p);
-
-	// Create card objects and added to an array
-	// The array will be used to retrieve the appropriate card
-	cards.push(
-		{cardName: 'findCollab', card: $findCollabCard}
-		,{cardName: 'findProject', card: $findProjectCard});
-	return _.find(cards, ['cardName', cardName]).card;
+	// Display voice command if it is turned on
+	render(pageName);
+	if (annyang.isListening()) {
+		$(`.${pageName}-search-command`).css("opacity", 1);
+	}
 }
 
 myApp.findCollab = function() {
+
 	var inputs = [];
 	var currInputType = 'topic';
 
@@ -166,13 +112,13 @@ myApp.findCollab = function() {
 							.attr('class', 'b-input-container--topic-input');
 	inputs.push(urlSearchInput, topicSearchInput);
 
-
+	// This section is for controlling the toggle between url or topic search
 	var urlButtonTab = $('<button>')
 						.attr({
 							name: 'url',
 							class: 'b-tab__url'
 						})
-						.append('URL');
+						.append('Url');
 	var topicButtonTab = $('<button>')
 						.attr({
 							name: 'topic',
@@ -203,6 +149,7 @@ myApp.findCollab = function() {
 									currInputType = 'url';
 								}
 							});
+
 	inputTabContainer.append(urlButtonTab, topicButtonTab);
 
 	var searchOptionContainer = $('<div>')
@@ -221,8 +168,7 @@ myApp.findCollab = function() {
 											// Then by splitting the remaining url we will end up with the [user, repo]
 											// Which we then join together to produce user/repo
 											// https://github.com/gatsbyjs/gatsby
-											this.userUrl = _.trimEnd($('.b-input-container--url-input').val(), '/')
-															.replace('https://github.com/', '');
+											this.userUrl = cleanUrl($('.b-input-container--url-input').val());
 											// console.log('parsed url', this.userUrl);
 
 											$('.b-input-container--url-input').val('');
@@ -230,7 +176,7 @@ myApp.findCollab = function() {
 										}
 										else {
 											// Remove all tags and return them
-											this.userSearchTopics = this.removeTags();
+											this.userSearchTopics = removeTags();
 											this.fetchReposGithub('topics', '', this.userSearchTopics);
 										}
 									}
@@ -238,6 +184,10 @@ myApp.findCollab = function() {
 
 	var $collaboratorList = $('<ul>')
 							.attr('class', 'collab-list wrapper-lg');
+
+	var $searchCommand = $('<p>')
+                    .attr('class', 'findCollab-search-command')
+                    .text('Say "Topics \'react, redux, github, etc...\' "');
 
 	var $ajaxDiv = $('<div>')
 					.attr('class', 'ajax-div')
@@ -248,35 +198,28 @@ myApp.findCollab = function() {
 						width: '1px'
 					});
 
+	var $homePageBtn = $('<a class="back-btn" href="/">home</a>');
+
 	$searchSeaction.append(searchOptionContainer, inputTabContainer);
 	$collabListSeaction.append($heading, $collaboratorList)
-	$section.append($searchSeaction, $collabListSeaction, $ajaxDiv);
+	$section.append($homePageBtn, $searchSeaction, $searchCommand, $collabListSeaction, $ajaxDiv);
 
 	return {pageName: 'findCollab', htmlContent: $section}
 }
-myApp.removeTags = function() {
-	var tags = $('#tags').tagEditor('getTags')[0].tags;
-	for (i = 0; i < tags.length; i++) { $('#tags').tagEditor('removeTag', tags[i]); }
-	return tags;
-}
 //Create the html for findProject pages
 myApp.findProject = function() {
+	// Create a html content for project page
 	var $section = $('<section>')
 				.attr('class', 'b-findProject-page');
-
 	var $searchSeaction = $('<div>')
 							.attr('class', 'b-findProject-page__search');
-
 	var $projectListSeaction = $('<div>')
 							.attr('class', 'b-findProject-page__project-list');
-
 	var $heading = $('<h2>')
 					.attr('class', 'b-findProject-page__heading')
 					.append('Find Project');
-
 	var topicSearchInput = $('<input name="tags" id="tags"/>')
 							.attr('class', 'b-input-container b-input-container--topic-input');
-
 	var searchOptionContainer = $('<div>')
 								.attr('class', 'b-input-container--project wrapper-lg')
 								.append(topicSearchInput)
@@ -289,14 +232,12 @@ myApp.findProject = function() {
 										$('.project-list').append('<img class="loading-gif" src="./img/box-project.gif">');
 
 										// Remove all tags and return them
-										this.userSearchTopics = this.removeTags();
+										this.userSearchTopics = removeTags();
 										this.fetchReposGithub('topics', '', this.userSearchTopics, 'project');
 									}
 								});
-
 	var $projectList = $('<ul>')
 							.attr('class', 'project-list wrapper-lg');
-
 	$searchSeaction.append(searchOptionContainer);
 	$projectListSeaction.append($heading, $projectList);
 
@@ -308,14 +249,18 @@ myApp.findProject = function() {
 						height: '1px',
 						width: '1px'
 					});
+	var $searchCommand = $('<p>')
+                    .attr('class', 'findProject-search-command')
+                    .text('Say "Project Topics \'react, redux, github, etc...\' "');
+	var $homePageBtn = $('<a class="back-btn" href="/">home</a>');
 
-	$section.append($searchSeaction, $projectListSeaction, $ajaxDiv);
-
+	$section.append($homePageBtn , $searchSeaction, $searchCommand, $projectListSeaction, $ajaxDiv);
 	return {pageName: 'findProject', htmlContent: $section};
 }
+
 myApp.fetchUrlInfo = function(newUrl, query) {
 	let url = `${this.urlPrefix}/repos/${this.userUrl}`;
-	if (query !== undefined && newUrl === false) {
+	if (newUrl === false && query !== undefined) {
 		url = `${this.urlPrefix}/repos/${this.userUrl}/${query}`;
 	}
 	if (newUrl !== undefined && query === false) {
@@ -334,23 +279,28 @@ myApp.fetchUrlInfo = function(newUrl, query) {
 myApp.fetchFromUrl = function() {
 	$.when(this.fetchUrlInfo(false))
 	.then( (urlInfo) => {
+		// check to see if the returned language for
+		// the user repo is a programming language. If not make a request for all the languages
+		// related to the project
 		this.userUrlInfo = urlInfo;
-		let primaryLanguage = this.normalizeStrings(urlInfo.language)[0];
-		if (_.indexOf(this.avoidLanguages, primaryLanguage) >= 0) {
-			return this.fetchUrlInfo(false, 'languages');
-		}
-		else {
-			return primaryLanguage;
-		}
+		let primaryLanguage = normalizeStrings(urlInfo.language)[0];
+		if (_.indexOf(this.avoidLanguages, primaryLanguage) >= 0) { return this.fetchUrlInfo(false, 'languages'); }
+		else { return primaryLanguage;}
+	})
+	.catch((err) => {
+		// handle error with fetching url
+		$('.collab-list').empty();
+		$('.collab-list')
+		.append(emptyGifDiv());
 	})
 	.then((primaryLanguage) => {
 		let language = primaryLanguage;
 		if (typeof language != 'string') {
-			language = this.getMostUsedLanguage(primaryLanguage);
+			language = getMostUsedLanguage(primaryLanguage);
 		}
-		// Make sure remove any topics that is specific to the user repo
+		// Make sure to remove any topics that is specific to the user repo
 		// This allows for a more general search result
-		let topics = _.difference(this.normalizeStrings(this.userUrlInfo.topics), this.normalizeStrings(this.userUrl.split('/')));
+		let topics = _.difference(normalizeStrings(this.userUrlInfo.topics), normalizeStrings(this.userUrl.split('/')));
 		this.fetchReposGithub('url', language, topics);
 	});
 
@@ -382,7 +332,8 @@ myApp.fetchReposGithub = function(type, primaryLanguage, topics, content) {
 				}
 				else {
 					$('.collab-list').empty();
-					$('.collab-list').append('<div class="nothing-gif"  style="width:100%;height:100px;padding-bottom:56%;position:relative;"><iframe src="https://giphy.com/embed/y63H09ZvHJdf2" width="100%" height="70%" style="position:absolute" frameBorder="0" class="giphy-embed" allowFullScreen></iframe></div><p><a href="https://giphy.com/gifs/nothing-y63H09ZvHJdf2">via GIPHY</a></p>');
+					$('.collab-list')
+					.append(emptyGifDiv());
 				}
 			});
 	}
@@ -401,7 +352,7 @@ myApp.fetchReposGithub = function(type, primaryLanguage, topics, content) {
 				}
 				else {
 					$('.collab-list').empty();
-					$('.collab-list').append('<div class="nothing-gif" style="width:100%;height:100px;padding-bottom:56%;position:relative;"><iframe src="https://giphy.com/embed/y63H09ZvHJdf2" width="100%" height="70%" style="position:absolute" frameBorder="0" class="giphy-embed" allowFullScreen></iframe></div><p class="nothing-p"><a href="https://giphy.com/gifs/nothing-y63H09ZvHJdf2">via GIPHY</a></p>');
+					$('.collab-list').append(emptyGifDiv());
 				}
 			});
 		}
@@ -422,12 +373,12 @@ myApp.fetchReposGithub = function(type, primaryLanguage, topics, content) {
 					$(window).unbind('scroll');
 					let callback = this.updateProjectList(data.items);
 					callback();
-					this.throttlePageContent(callback);
+					throttlePageContent(callback);
 					console.log('done fetching');
 				}
 				else {
 					$('.project-list').empty();
-					$('.project-list').append('<div class="nothing-gif" style="width:100%;height:100px;padding-bottom:56%;position:relative;"><iframe src="https://giphy.com/embed/y63H09ZvHJdf2" width="100%" height="70%" style="position:absolute" frameBorder="0" class="giphy-embed" allowFullScreen></iframe></div><p class="nothing-p"><a href="https://giphy.com/gifs/nothing-y63H09ZvHJdf2">via GIPHY</a></p>');
+					$('.project-list').append(emptyGifDiv());
 				}
 			});
 		}
@@ -437,6 +388,7 @@ myApp.fetchReposGithub = function(type, primaryLanguage, topics, content) {
 // repos similar to passed in query values
 myApp.fetchCollab = function(data) {
 	let topRepos = data.items;
+	// console.log('related repos', topRepos);
 	let contributorList = [];
 
 	if (topRepos.length < 5){
@@ -466,8 +418,10 @@ myApp.fetchCollab = function(data) {
 		// Have to clear any previous scroll handlers
 		$(window).unbind('scroll');
 		let callback = this.updateCollabList(_.flatten(data));
+		// Append the first 6 results and then pass the responsiblity to
+		// the throttle function
 		callback();
-		this.throttlePageContent(callback);
+		throttlePageContent(callback);
 	})
 	.catch((err) => {
 		console.log('error getting contributors');
@@ -486,7 +440,7 @@ myApp.updateCollabList = function(collaborators) {
 		// Remove previous collaborator list
 		prev = next;
 		next+=6;
-		let currentCollaborators = []
+		let currentCollaborators = [];
 		console.log('all', collaborators);
 		console.log('prev', prev, 'next', next);
 
@@ -507,7 +461,6 @@ myApp.updateCollabList = function(collaborators) {
 		});
 	}
 }
-
 myApp.updateProjectList = function(projects) {
 	var prev = 0;
 	var next = 0;
@@ -603,34 +556,6 @@ myApp.generateProjectCard = function(p) {
 	return $link;
 
 }
-//always returns an array of strings or array of string
-myApp.normalizeStrings = function(arrayOfStrings) {
-	if (!Array.isArray(arrayOfStrings)) {
-		return _.concat([],_.toLower(arrayOfStrings));
-	}
-	else {
-		return _.map(arrayOfStrings, (string) => {
-			return _.toLower(string);
-		});
-	}
-}
-myApp.getMostUsedLanguage = function(githubLangObject) {
-	return _.sortBy(
-				_.filter(
-					_.map(githubLangObject, (val, key) => {
-							return {'language': this.normalizeStrings(key)[0], 'qty': val}
-					}), (obj) => {
-							 return _.indexOf(this.avoidLanguages, obj.language) < 0
-					}), 'qty')[0].language;
-}
-myApp.throttlePageContent = function(updateContent) {
-	$(window).scroll(function () {
-        if ($(document).height() <= $(window).scrollTop() + $(window).height()) {
-        	console.log('almost at the bottom');
-            updateContent();
-        }
-    });
-}
 myApp.voiceSearch = function(topics, content) {
 	console.log('inside', topics)
 	if (content === 'project') {
@@ -642,7 +567,8 @@ myApp.voiceSearch = function(topics, content) {
 }
 
 $(function(){
-	// Credits goes Magnar from
+	window.myApp = myApp;
+	// Credits goes to Magnar from
 	// https://stackoverflow.com/questions/920236/how-can-i-detect-if-a-selector-returns-null
 	$.fn.exists = function () { return this.length !== 0; }
 
@@ -651,20 +577,16 @@ $(function(){
 
 	// After initializing myApp setup voice recognition
 	if (annyang) {
-
+		annyang.debug(true);
 	  // Define voice commands and its appropriate function
 	  var commands = {
-	  	'hello *collabo': function() {
-	  		$('#greeting')[0].play();
-	  	},
-
-	    'find *action':  function(action) {
+	    'search *': function(action) {
 	    	console.log('finding ', action);
 	    	$('#find')[0].play();
 	    	// Render findCollab Page
 	    	myApp.handleCollabOrProject('findCollab');
 	    },
-	    'search *action':  function(action) {
+	    'check *':  function(action) {
 	    	console.log('searching ', action);
 		    $('#search')[0].play();
 		    // Render findSearch Page
@@ -673,6 +595,8 @@ $(function(){
 	    'project topics *action':  function(action) {
 	    	console.log('topics ');
 	    	$('#searching')[0].play();
+				// Clear list when a new search is made
+				$('.project-list').empty();
 
 	    	// Executed topic search for project
 	    	myApp.voiceSearch(_.split(action, " "), "project");
@@ -681,17 +605,38 @@ $(function(){
 	    'topics *action':  function(action) {
 	    	console.log('topics ');
 	    	$('#searching')[0].play();
+				// Clear list when a new search is made
+				$('.collab-list').empty();
+
 	    	// Executed topic search for collaborators
 	    	myApp.voiceSearch(_.split(action, " "));
 	    	setTimeout(() => $('#finito')[0].play(), 1000);
-	    },
-
+	    }
 	  };
-
 	  // Add my commands to annyang
-	  annyang.addCommands(commands);
+		annyang.addCommands(commands);
 
-	  // Start listening. You can call this here, or attach this call to an event, button, etc.
-	  annyang.start();
+		$('#annyang-active').on('click', function() {
+			if (annyang.isListening()) {
+				annyang.abort();
+				$('.findCollab-command').animate({"opacity": 0}, 700);
+				$('.findProject-command').animate({"opacity": 0}, 700);
+				$(this)
+				.html('Activate Voice Command')
+				.css("background-color", "#FE3F80");
+			}
+			else {
+				annyang.start();
+
+				// Start listening. You can call this here, or attach this call to an event, button, etc.
+				alert('Warning: The voice recognition function is experimental, it will not work properly in a noisey environement.');
+				$('.findCollab-command').animate({"opacity": 1}, 700);
+				$('.findProject-command').animate({"opacity": 1}, 700);
+				$(this)
+				.html('Deactivate Voice Command')
+				.css("background-color", "#C1185A");
+			}
+			// $(this).replaceWith('<button id="annyang-abort">Deactivate Voice Command</button>')
+		});
 	}
 });
