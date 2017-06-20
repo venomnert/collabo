@@ -198,7 +198,7 @@ myApp.findCollab = function() {
 						width: '1px'
 					});
 
-	var $homePageBtn = $('<a class="back-btn" href="https://venomnert.github.io/collabo/">home</a>');
+	var $homePageBtn = $('<a class="back-btn" href="https://venomnert.github.io/collabo">home</a>');
 
 	$searchSeaction.append(searchOptionContainer, inputTabContainer);
 	$collabListSeaction.append($heading, $collaboratorList)
@@ -252,7 +252,7 @@ myApp.findProject = function() {
 	var $searchCommand = $('<p>')
                     .attr('class', 'findProject-search-command')
                     .text('Say "Project Topics \'react, redux, github, etc...\' "');
-	var $homePageBtn = $('<a class="back-btn" href="https://venomnert.github.io/collabo/">home</a>');
+	var $homePageBtn = $('<a class="back-btn" href="https://venomnert.github.io/collabo">home</a>');
 
 	$section.append($homePageBtn , $searchSeaction, $searchCommand, $projectListSeaction, $ajaxDiv);
 	return {pageName: 'findProject', htmlContent: $section};
