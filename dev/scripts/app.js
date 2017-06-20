@@ -435,14 +435,14 @@ myApp.fetchCollab = function(data) {
 myApp.updateCollabList = function(collaborators) {
 	var prev = 0;
 	var next = 0;
-	console.log('top', collaborators);
+	// console.log('top', collaborators);
 	return () => {
 		// Remove previous collaborator list
 		prev = next;
 		next+=6;
 		let currentCollaborators = [];
-		console.log('all', collaborators);
-		console.log('prev', prev, 'next', next);
+		// console.log('all', collaborators);
+		// console.log('prev', prev, 'next', next);
 
 		if (next <= collaborators.length) {
 			currentCollaborators = _.slice(collaborators, prev, next);
@@ -469,7 +469,7 @@ myApp.updateProjectList = function(projects) {
 		prev = next;
 		next+=6;
 		let currentProjects = []
-		console.log('all', projects);
+		// console.log('all', projects);
 		console.log('prev', prev, 'next', next);
 
 		if (next <= projects.length) {
@@ -479,7 +479,7 @@ myApp.updateProjectList = function(projects) {
 			currentProjects = _.slice(projects, prev, projects.length);
 		}
 
-		console.log('current list', currentProjects);
+		// console.log('current list', currentProjects);
 		_.forEach(currentProjects, (project) => {
 			let $li = $('<li>')
 					.attr('class', 'project-list__item')
